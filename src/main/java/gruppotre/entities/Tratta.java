@@ -23,6 +23,9 @@ public class Tratta {
     @Column(name = "temp_base")
     private int tempBase;  // tempo "standard" della tratta senza mezzo
 
+    @Column(name = "tempo_previsto")
+    private int tempoPrevisto;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_veicolo", nullable = false)
     private TipoVeicolo tipo; // mezzo standard per questa tratta
@@ -38,6 +41,7 @@ public class Tratta {
         this.capolinea = capolinea;
         this.tempBase = tempBase;
         this.tipo = tipo;
+        aggiornaTempoPrevisto();
     }
 
     // ------------------- GETTER/SETTER -------------------
@@ -56,16 +60,33 @@ public class Tratta {
     public TipoVeicolo getTipo() { return tipo; }
     public void setTipo(TipoVeicolo tipo) { this.tipo = tipo; }
 
+    public void setTipo(TipoVeicolo tipo, Mezzo mezzo) {
+        this.tipo = tipo;
+        this.tempoPrevisto = calcolaTempoPrevisto(mezzo);
+    }
+
+    public int getTempoPrevisto() {
+        return tempoPrevisto;
+    }
+
+    public void setTempoPrevisto(int tempoPrevisto) {
+        this.tempoPrevisto = tempoPrevisto;
+    }
+
     public List<Percorrenza> getPercorrenze() { return percorrenze; }
     public void setPercorrenze(List<Percorrenza> percorrenze) { this.percorrenze = percorrenze; }
 
     // Calcola il tempo previsto combinando tratta + tipo mezzo
+    public void aggiornaTempoPrevisto() {
+        // calcola tempoPrevisto in base al mezzo “standard” della tratta
+        this.tempoPrevisto = calcolaTempoPrevisto(new Mezzo(this.tipo, 0)); // capienza non conta
+    }
+
     public int calcolaTempoPrevisto(Mezzo mezzo) {
         int tempo = this.tempBase;
         switch (mezzo.getTipo()) {
-            case BUS -> tempo += 0;
-            case TRAM -> tempo -= 10;
-            default -> tempo = tempBase;
+            case BUS -> tempo += 0;  //tempBase + 0 tempo non cambia
+            case TRAM -> tempo -= 10; //tempBase -10 tempoPrevisto minore perche TRAM piu veloce
         }
         return tempo;
     }
