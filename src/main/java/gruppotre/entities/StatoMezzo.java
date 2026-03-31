@@ -25,4 +25,28 @@ public class StatoMezzo {
 
     @Column(name = "data_fine")
     private LocalDate dataFine;
+
+    public StatoMezzo() {}
+
+    public StatoMezzo(Mezzo mezzo, StatoVeicolo stato, LocalDate dataInizio, LocalDate dataFine) {
+        this.mezzo = mezzo;
+        this.stato = stato;
+        this.dataInizio = dataInizio;
+        this.dataFine = dataFine;
+    }
+
+    // GETTER / SETTER
+    public UUID getId() { return id; }
+
+    public Mezzo getMezzo() { return mezzo; }
+    public void setMezzo(Mezzo mezzo) { this.mezzo = mezzo; }
+
+    public StatoVeicolo getStato() { return stato; }
+    public void setStato(StatoVeicolo stato) { this.stato = stato; }
+
+    public LocalDate getDataInizio() { return dataInizio; }
+    public void setDataInizio(LocalDate dataInizio) { this.dataInizio = dataInizio; }
+
+    public LocalDate getDataFine() { return dataFine; }
+    public void setDataFine(LocalDate dataFine) { this.dataFine = dataFine; }
 }
