@@ -1,7 +1,9 @@
 package gruppotre;
 
 import gruppotre.dao.MezzoDAO;
+import gruppotre.dao.TrattaDAO;
 import gruppotre.entities.Mezzo;
+import gruppotre.entities.Tratta;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -19,6 +21,7 @@ public class Application {
         EntityManager em = emf.createEntityManager();
 
         MezzoDAO Mdao = new MezzoDAO(em);
+        TrattaDAO trattaDAO = new TrattaDAO(em);
 
        // em.getTransaction().begin();
 
@@ -47,8 +50,9 @@ public class Application {
 //        }
 
         // in Mdao.findAll() --> dentro findAll() Mettere o BUS o TRAM in base a quello che si vuole cercare
-        List<Mezzo> MezziList = Mdao.findAll(TRAM);
-        MezziList.forEach(m -> System.out.println("\nMezzo numero: " + m.getId() + ", Capienza: " + m.getCapienza()+ "."));
+//        List<Mezzo> MezziList = Mdao.findAll(TRAM);
+//        MezziList.forEach(m -> System.out.println("\nMezzo numero: " + m.getId() + ", Capienza: " + m.getCapienza()+ "."));
+
 
         em.close();
         emf.close();

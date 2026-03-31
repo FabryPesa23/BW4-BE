@@ -14,9 +14,11 @@ public class Percorrenza {
     private UUID id;
 
     @ManyToOne
+    @JoinColumn(name = "mezzo_id")
     private Mezzo mezzo;
 
     @ManyToOne
+    @JoinColumn(name = "tratta_id")
     private Tratta tratta;
 
     @Column(name = "data_partenza")
