@@ -23,8 +23,56 @@ public class Mezzo {
     private List<StatoMezzo> stati;
 
     @OneToMany(mappedBy = "mezzo")
-    private List<Percorrenza> percorrenzas;
+    private List<Percorrenza> percorrenze;
 
-    gruppotre.enums.TipoVeicolo tipo;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public TipoVeicolo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoVeicolo tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getCapienza() {
+        return capienza;
+    }
+
+    public void setCapienza(int capienza) {
+        this.capienza = capienza;
+    }
+
+    public List<StatoMezzo> getStati() {
+        return stati;
+    }
+
+    public void setStati(List<StatoMezzo> stati) {
+        this.stati = stati;
+    }
+
+    public List<Percorrenza> getPercorrenze() {
+        return percorrenze;
+    }
+
+    public void setPercorrenza(List<Percorrenza> percorrenze) {
+        this.percorrenze = percorrenze;
+    }
+
+    public Mezzo() {
+
+    }
+    public  Mezzo(TipoVeicolo tipo, int capienza) {
+        this.tipo = tipo;
+        this.capienza = capienza;
+    }
+
 
 }
