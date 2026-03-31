@@ -1,8 +1,7 @@
 package gruppotre.entities;
 
-import gruppotre.enums.TipoVeicolo;
 import jakarta.persistence.*;
-
+import gruppotre.enums.TipoVeicolo;
 import java.util.List;
 import java.util.UUID;
 
