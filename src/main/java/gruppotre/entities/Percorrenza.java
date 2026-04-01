@@ -27,6 +27,9 @@ public class Percorrenza {
     @Column(name = "tempo_effettivo")
     private int tempoEffettivo; // minuti
 
+    public static void main(String[] args) {
+
+    }
     public Percorrenza() {
 
     }

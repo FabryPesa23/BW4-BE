@@ -115,9 +115,9 @@ public class Mezzo {
 //        MezziList.forEach(m -> System.out.println("\nMezzo numero: " + m.getId() + ", Capienza: " + m.getCapienza()+ "."));
 
 
-        Tratta tratta1 = new Tratta("Roma", "Bologna", 50, BUS); // tempoPrevisto = 50
-        Tratta tratta2 = new Tratta("Milano", "Torino", 40, TRAM); // tempoPrevisto = 30
-        Tratta tratta3 = new Tratta("Milano", "Torino", 40, BUS); // tempoPrevisto = 40
+        Tratta tratta1 = new Tratta("Roma", "Bologna", 50); // tempoPrevisto = 50
+        Tratta tratta2 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 30
+        Tratta tratta3 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 40
 
 //        trattaDAO.update(tratta1);
 //        trattaDAO.update(tratta2);
@@ -129,13 +129,13 @@ public class Mezzo {
         List<Tratta> tratteDaRoma = trattaDAO.findByZonaPartenza("Roma");
         System.out.println("\nTratte in partenza da Roma: \n");
         for (Tratta t : tratteDaRoma) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + t.getTipo() + " : " + t.getTempoPrevisto() + " min");
+            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + " : " + t.getTempoPrevisto() + " min");
         }
 
         List<Tratta> tratteDaMilano = trattaDAO.findByZonaPartenza("Milano");
         System.out.println("\nTratte in partenza da Milano: \n");
         for (Tratta t : tratteDaMilano) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + t.getTipo() + " : " + t.getTempoPrevisto() + " min");
+            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " +  " : " + t.getTempoPrevisto() + " min");
         }
 
         em.close();
