@@ -49,7 +49,7 @@ public class Percorrenza {
         return tempo;
     }
 
-//    GETTER
+//    GETTER-
     public UUID getId() {
         return id;
     }
