@@ -17,6 +17,7 @@ public class MezzoDAO {
     }
 
     public void save(Mezzo mezzo) {
+
         em.persist(mezzo);
     }
 

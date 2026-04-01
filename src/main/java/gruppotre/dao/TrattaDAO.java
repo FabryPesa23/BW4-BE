@@ -46,7 +46,6 @@ public class TrattaDAO {
         }
     }
 
-
     public boolean update(Tratta tratta) {
         try {
             em.getTransaction().begin();

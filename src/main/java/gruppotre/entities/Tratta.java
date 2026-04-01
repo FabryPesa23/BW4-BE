@@ -26,9 +26,10 @@ public class Tratta {
     @Column(name = "tempo_previsto")
     private int tempoPrevisto;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_veicolo", nullable = false)
-    private TipoVeicolo tipo; // mezzo standard per questa tratta
+    // DA METTERE IN PERCORRENZA
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "tipo_veicolo", nullable = false)
+//    private TipoVeicolo tipo; // mezzo standard per questa tratta
 
     @OneToMany(mappedBy = "tratta")
     private List<Percorrenza> percorrenze;
@@ -36,12 +37,12 @@ public class Tratta {
     // ------------------- COSTRUTTORI -------------------
     public Tratta() { }
 
-    public Tratta(String zonaPartenza, String capolinea, int tempBase, TipoVeicolo tipo) {
+    public Tratta(String zonaPartenza, String capolinea,int tempoPrevisto) {
         this.zonaPartenza = zonaPartenza;
         this.capolinea = capolinea;
-        this.tempBase = tempBase;
-        this.tipo = tipo;
-        aggiornaTempoPrevisto();
+        this.tempoPrevisto = tempoPrevisto;
+//        this.tipo = tipo; DA METTERE IN PERCORRENZA
+//        aggiornaTempoPrevisto(); DA METTERE IN PERCORRENZA
     }
 
     // ------------------- GETTER/SETTER -------------------
@@ -54,16 +55,15 @@ public class Tratta {
     public String getCapolinea() { return capolinea; }
     public void setCapolinea(String capolinea) { this.capolinea = capolinea; }
 
-    public int getTempBase() { return tempBase; }
-    public void setTempBase(int tempBase) { this.tempBase = tempBase; }
 
-    public TipoVeicolo getTipo() { return tipo; }
-    public void setTipo(TipoVeicolo tipo) { this.tipo = tipo; }
+    // DA METTERE IN PERCORRENZA
+//    public TipoVeicolo getTipo() { return tipo; }
+//    public void setTipo(TipoVeicolo tipo) { this.tipo = tipo; }
 
-    public void setTipo(TipoVeicolo tipo, Mezzo mezzo) {
-        this.tipo = tipo;
-        this.tempoPrevisto = calcolaTempoPrevisto(mezzo);
-    }
+//    public void setTipo(TipoVeicolo tipo, Mezzo mezzo) {
+//        this.tipo = tipo;
+//        this.tempoPrevisto = calcolaTempoPrevisto(mezzo);
+//    }
 
     public int getTempoPrevisto() {
         return tempoPrevisto;
@@ -76,18 +76,18 @@ public class Tratta {
     public List<Percorrenza> getPercorrenze() { return percorrenze; }
     public void setPercorrenze(List<Percorrenza> percorrenze) { this.percorrenze = percorrenze; }
 
+//  DA METTERE IN PERCORRENZA
     // Calcola il tempo previsto combinando tratta + tipo mezzo
-    public void aggiornaTempoPrevisto() {
+//    public void aggiornaTempoPrevisto() {
         // calcola tempoPrevisto in base al mezzo “standard” della tratta
-        this.tempoPrevisto = calcolaTempoPrevisto(new Mezzo(this.tipo, 0)); // capienza non conta
-    }
-
-    public int calcolaTempoPrevisto(Mezzo mezzo) {
-        int tempo = this.tempBase;
-        switch (mezzo.getTipo()) {
-            case BUS -> tempo += 0;  //tempBase + 0 tempo non cambia
-            case TRAM -> tempo -= 10; //tempBase -10 tempoPrevisto minore perche TRAM piu veloce
-        }
-        return tempo;
-    }
+//        this.tempoPrevisto = calcolaTempoPrevisto(new Mezzo(this.tipo, 0)); // capienza non conta
+//    }
+//    public int calcolaTempoPrevisto(Mezzo mezzo) {
+//        int tempo = this.tempBase;
+//        switch (mezzo.getTipo()) {
+//            case BUS -> tempo += 0;  //tempBase + 0 tempo non cambia
+//            case TRAM -> tempo -= 10; //tempBase -10 tempoPrevisto minore perche TRAM piu veloce
+//        }
+//        return tempo;
+//    }
 }
