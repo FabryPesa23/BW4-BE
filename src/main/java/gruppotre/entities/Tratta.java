@@ -23,7 +23,6 @@ public class Tratta {
     @Column(name = "tempo_previsto")
     private int tempoBase; // tempo "standard" della tratta senza mezzo
 
-
     @OneToMany(mappedBy = "tratta")
     private List<Percorrenza> percorrenze;
 
