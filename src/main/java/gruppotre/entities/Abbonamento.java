@@ -1,5 +1,6 @@
 package gruppotre.entities;
 
+import gruppotre.enums.TipoAbbonamento;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

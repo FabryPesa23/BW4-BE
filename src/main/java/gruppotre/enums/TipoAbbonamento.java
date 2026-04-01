@@ -1,4 +1,4 @@
-package gruppotre.entities;
+package gruppotre.enums;
 
 public enum TipoAbbonamento {
     SETTIMANALE,
