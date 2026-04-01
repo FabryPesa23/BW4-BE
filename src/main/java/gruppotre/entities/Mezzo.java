@@ -31,6 +31,8 @@ public class Mezzo {
     private List<Percorrenza> percorrenze;
 
 
+    // --------------------- GETTER/SETTER -----------------
+
     public UUID getId() {
         return id;
     }
@@ -71,6 +73,7 @@ public class Mezzo {
         this.percorrenze = percorrenze;
     }
 
+    // -------------------- COSTRUTTORI ---------------------
     public Mezzo() {
 
     }
@@ -129,13 +132,13 @@ public class Mezzo {
         List<Tratta> tratteDaRoma = trattaDAO.findByZonaPartenza("Roma");
         System.out.println("\nTratte in partenza da Roma: \n");
         for (Tratta t : tratteDaRoma) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + " : " + t.getTempoPrevisto() + " min");
+            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + " : " + t.getTempoBase() + " min");
         }
 
         List<Tratta> tratteDaMilano = trattaDAO.findByZonaPartenza("Milano");
         System.out.println("\nTratte in partenza da Milano: \n");
         for (Tratta t : tratteDaMilano) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " +  " : " + t.getTempoPrevisto() + " min");
+            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " +  " : " + t.getTempoBase() + " min");
         }
 
         em.close();

@@ -30,6 +30,8 @@ public class Percorrenza {
     public static void main(String[] args) {
 
     }
+
+    // --------------------- COSTRUTTORI ------------------
     public Percorrenza() {
 
     }
@@ -41,24 +43,29 @@ public class Percorrenza {
         this.tempoEffettivo = calcoloTempo();
     }
 
+    // CALCOLO TEMPO IN BASE AL TRASPORTO
     private int calcoloTempo() {
-        int tempo = tratta.getTempoPrevisto();
+        int tempo = tratta.getTempoBase();
 
         switch (mezzo.getTipo()) {
-            case BUS -> tempo += 0;
-            case TRAM -> tempo -= 10;
+            case BUS -> tempo += 0; // temp_previsto + 0 tempo non cambia in bus
+            case TRAM -> tempo -= 10; // temp_previsto - 10 tempo minore , tram + veloce
         }
 
         return tempo;
     }
 
-//    GETTER-
+// ---------------- GETTER/SETTER ------------------
+
     public UUID getId() {
         return id;
     }
 
     public int getTempoEffettivo() {
         return tempoEffettivo;
+    }
+    public void setTempoEffettivo(int tempoEffettivo) {
+        this.tempoEffettivo= tempoEffettivo;
     }
 
     public LocalDateTime getDataPartenza() {
@@ -71,6 +78,16 @@ public class Percorrenza {
 
     public Tratta getTratta() {
         return tratta;
+    }
+
+    public void setMezzo(Mezzo mezzo) {
+        this.mezzo = mezzo;
+        this.tempoEffettivo = calcoloTempo();
+    }
+
+    public void setTratta(Tratta tratta) {
+        this.tratta = tratta;
+        this.tempoEffettivo = calcoloTempo();
     }
 
 }
