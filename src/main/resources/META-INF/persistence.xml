@@ -12,6 +12,10 @@
         <class>gruppotre.entities.PuntoEmissione</class>
         <class>gruppotre.entities.Rivenditore</class>
         <class>gruppotre.entities.Distributore</class>
+        <class>gruppotre.entities.TitoloViaggio</class>
+        <class>gruppotre.entities.Biglietto</class>
+        <class>gruppotre.entities.Abbonamento</class>
+        <class>gruppotre.entities.Mezzo</class>
            <properties>
                <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/gruppotre"/>
                <!-- Nel mio caso la porta è 5433 nel vostro 5432 (se non l'avete cambiata) -->
