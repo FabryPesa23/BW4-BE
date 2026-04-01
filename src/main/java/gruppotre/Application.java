@@ -19,6 +19,8 @@ public class Application {
         System.out.println("Avvio del sistema... connessione al database in corso.");
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("gruppotre");
         EntityManager em = emf.createEntityManager();
+        // Innesco per popolare il DB se è vuoto
+        PopulateDB.popolaSeVuoto(em);
 
         // SETUP DELLO SCANNER E DEL LOOP PRINCIPALE
         Scanner scanner = new Scanner(System.in);
@@ -208,18 +210,19 @@ public class Application {
     }
 
 
-    // ==========================================
+    // ========================
     // SOTTOMENU AMMINISTRATORE
-    // ==========================================
+    // ========================
     private static void gestisciMenuAdmin(Scanner scanner, EntityManager em) {
         boolean inMenu = true;
+        gruppotre.dao.StatoMezzoDAO statoDAO = new gruppotre.dao.StatoMezzoDAO(em);
 
         while (inMenu) {
             System.out.println("\n--- AREA AMMINISTRATORE ---");
-            System.out.println("1. Controlla validità abbonamento");
-            System.out.println("2. Visualizza statistiche vendite");
-            System.out.println("3. Visualizza biglietti vidimati");
-            System.out.println("4. Gestione manutenzione mezzi");
+            System.out.println("1. Controlla validità tessera");
+            System.out.println("2. Statistiche: Titoli venduti per Punto Vendita");
+            System.out.println("3. Statistiche: Biglietti vidimati per Mezzo");
+            System.out.println("4. Gestione manutenzione mezzi (DAO Colleghi)");
             System.out.println("0. Torna indietro");
             System.out.print("Scelta: ");
 
@@ -227,19 +230,56 @@ public class Application {
 
             switch (input) {
                 case "1":
-                    System.out.println("[Admin 1] - Pronti per controllo abbonamento...");
+                    System.out.println("Inserisci l'ID della Tessera da controllare:");
+                    long idTessera = leggiNumeroSicuro(scanner);
+                    Tessera t = em.find(Tessera.class, idTessera);
+                    if (t == null) {
+                        System.out.println("ERRORE: Tessera non trovata.");
+                    } else {
+                        System.out.println("Tessera ID " + t.getId() + " di: " + t.getUtente().getNome() + " " + t.getUtente().getCognome());
+                        if (t.getDataScadenza().isBefore(java.time.LocalDate.now())) {
+                            System.out.println("Stato: ❌ SCADUTA il " + t.getDataScadenza());
+                        } else {
+                            System.out.println("Stato: ✅ VALIDA fino al " + t.getDataScadenza());
+                        }
+                    }
                     break;
                 case "2":
-                    System.out.println("[Admin 2] - Pronti per statistiche vendite...");
+                    System.out.println("Inserisci l'ID del Punto Vendita (es. 1):");
+                    long idPunto = leggiNumeroSicuro(scanner);
+                    Long venduti = (Long) em.createQuery("SELECT COUNT(tv) FROM TitoloViaggio tv WHERE tv.puntoEmissione.id = :id")
+                            .setParameter("id", idPunto)
+                            .getSingleResult();
+                    System.out.println("-> Il Punto Vendita ID " + idPunto + " ha emesso un totale di " + venduti + " titoli di viaggio.");
                     break;
                 case "3":
-                    System.out.println("[Admin 3] - Pronti per statistiche vidimazioni...");
+                    System.out.println("Inserisci l'UUID del Mezzo (es. a3028812-...):");
+                    UUID idMezzo = leggiUUIDSicuro(scanner);
+                    Long vidimati = (Long) em.createQuery("SELECT COUNT(b) FROM Biglietto b WHERE b.mezzo.id = :id")
+                            .setParameter("id", idMezzo)
+                            .getSingleResult();
+                    System.out.println("-> Sul mezzo " + idMezzo + " sono stati vidimati " + vidimati + " biglietti.");
                     break;
                 case "4":
-                    System.out.println("[Admin 4] - Pronti per mandare mezzi in manutenzione...");
+                    System.out.println("1. Visualizza mezzi in servizio\n2. Visualizza mezzi in manutenzione");
+                    System.out.print("Scelta: ");
+                    String sub = scanner.nextLine();
+                    if(sub.equals("1")) {
+                        java.util.List<Mezzo> inServizio = statoDAO.findMezziInServizio();
+                        System.out.println("MEZZI IN SERVIZIO:");
+                        if(inServizio.isEmpty()) System.out.println("Nessun mezzo in servizio.");
+                        inServizio.forEach(m -> System.out.println("- " + m.getTipo() + " [" + m.getId() + "]"));
+                    } else if(sub.equals("2")) {
+                        java.util.List<Mezzo> inManut = statoDAO.findMezziInManutenzione();
+                        System.out.println("MEZZI IN MANUTENZIONE:");
+                        if(inManut.isEmpty()) System.out.println("Nessun mezzo in manutenzione.");
+                        inManut.forEach(m -> System.out.println("- " + m.getTipo() + " [" + m.getId() + "]"));
+                    } else {
+                        System.out.println("Scelta non valida.");
+                    }
                     break;
                 case "0":
-                    inMenu = false; // Torna al menu principale
+                    inMenu = false;
                     break;
                 default:
                     System.out.println("ERRORE: Scelta non valida.");
