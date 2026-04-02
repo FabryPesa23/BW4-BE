@@ -145,7 +145,7 @@ public class Mezzo {
 
         System.out.println("MEZZI NEL DB:");
         for (Mezzo m : mezzi) {
-            System.out.println(m.getId());
+            System.out.println("TIPO MEZZO: " + m.getTipo() + ", ID MEZZO: " + m.getId());
         }
 
         em.close();
