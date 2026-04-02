@@ -25,8 +25,13 @@ public class PercorrenzaDAO {
         }
     }
 
-    public Percorrenza findById(UUID id) {
-        return em.find(Percorrenza.class, id);
+    public Percorrenza findById(String idString) {
+        try {
+            return em.find(Percorrenza.class, java.util.UUID.fromString(idString));
+        } catch (IllegalArgumentException e) {
+            System.out.println("ID non valido: " + idString);
+            return null;
+        }
     }
 
     public List<Percorrenza> findAll() {
