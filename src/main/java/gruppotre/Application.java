@@ -8,6 +8,7 @@ import jakarta.persistence.Persistence;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -494,9 +495,10 @@ public class Application {
 
                             int tempoPrevisto = p.calcolaTempoPrevisto(p.getMezzo(), p.getTratta());
                             int tempoEffettivo = p.getTempoEffettivo();
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
                             System.out.println("- Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea());
-                            System.out.println("  Data Partenza: " + p.getDataPartenza());
+                            System.out.println("  Data Partenza: " + p.getDataPartenza().format(dtf));
                             System.out.println("  Tempo Previsto (Ideale):  " + tempoPrevisto + " min");
                             System.out.println("  Tempo Effettivo (Reale):  " + tempoEffettivo + " min");
 
