@@ -238,9 +238,9 @@ public class Application {
                     } else {
                         System.out.println("Tessera ID " + t.getId() + " di: " + t.getUtente().getNome() + " " + t.getUtente().getCognome());
                         if (t.getDataScadenza().isBefore(java.time.LocalDate.now())) {
-                            System.out.println("Stato: ❌ SCADUTA il " + t.getDataScadenza());
+                            System.out.println("Stato: SCADUTA il " + t.getDataScadenza());
                         } else {
-                            System.out.println("Stato: ✅ VALIDA fino al " + t.getDataScadenza());
+                            System.out.println("Stato: VALIDA fino al " + t.getDataScadenza());
                         }
                     }
                     break;

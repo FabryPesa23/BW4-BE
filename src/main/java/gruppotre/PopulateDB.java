@@ -11,7 +11,7 @@ public class PopulateDB {
         long count = (long) em.createQuery("SELECT COUNT(m) FROM Mezzo m").getSingleResult();
 
         if (count == 0) {
-            System.out.println("🌱 Database vuoto rilevato! Avvio il Data Seeding...");
+            System.out.println("Database vuoto rilevato! Avvio il Data Seeding...");
             em.getTransaction().begin();
 
             Distributore d1 = new Distributore("Distributore Stazione Centrale", true);
@@ -41,7 +41,7 @@ public class PopulateDB {
             statoDAO.inizializzaStato(bus);
             statoDAO.inizializzaStato(tram);
 
-            System.out.println("✅ Data Seeding completato! Dati fittizi inseriti con successo.");
+            System.out.println("Data Seeding completato! Dati fittizi inseriti con successo.");
         }
     }
 }
