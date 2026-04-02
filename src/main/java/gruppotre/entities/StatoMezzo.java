@@ -56,9 +56,9 @@ public class StatoMezzo {
 
         // STATO INIZIALE
 
-//        String tramid = "0e7881a8-573e-4190-b75d-3181c574fed2";
-//        Mezzo tram = mezzoDAO.findById(tramid);
-//           statoManutenzioneDAO.inizializzaStato(tram);
+ /*String tramid = "f4cc0e43-7c82-49aa-9fdd-4c6ae27514cc";
+Mezzo tram = mezzoDAO.findById(tramid);
+statoManutenzioneDAO.inizializzaStato(tram);*/
 //
 //        String tramId2 = "73fc3392-8396-4d12-9728-9cc1b1655b91";
 //        Mezzo mezzo2 = mezzoDAO.findById(tramId2);
