@@ -43,8 +43,8 @@ public class Percorrenza {
 
         // METODO PER AGGIUNGERE NUOVA PERCORRENZA CON TRATTA E MEZZO
         // CALCOLA ANCHE IL TEMPO-EFFETTIVO IN BASE AL MEZZO
-        Mezzo mezzo = Mdao.findById("a304b75a-7096-4a80-8d71-4ce4659cfe8a");
-        Tratta tratta = trattaDAO.findById("9244167e-88ba-484f-9802-543efa579c1b");
+        Mezzo mezzo = Mdao.findById("ea9289c7-8468-421c-ae19-39678e66f7fe");
+        Tratta tratta = trattaDAO.findById("c33e361e-ec3e-406d-8c7e-6404cdc288b6");
 
         if (mezzo == null ) {
             System.out.println("Mezzo non trovato");
@@ -58,7 +58,7 @@ public class Percorrenza {
         Percorrenza p1 = new Percorrenza(mezzo, tratta, LocalDateTime.now());
 
         em.getTransaction().begin();
-        em.persist(p1);
+        /*em.persist(p1);*/
         em.getTransaction().commit();
 
         // METODO PER VEDERE TUTTE LE PERCORRENZE

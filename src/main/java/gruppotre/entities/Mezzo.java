@@ -90,18 +90,18 @@ public class Mezzo {
         MezzoDAO Mdao = new MezzoDAO(em);
         TrattaDAO trattaDAO = new TrattaDAO(em);
 
-        // em.getTransaction().begin();
+     /*   em.getTransaction().begin();*/
 
         // CREO MEZZI
         Mezzo bus2 = new Mezzo(BUS, 100);
         Mezzo tram1 = new Mezzo(TRAM, 150);
-        Mezzo tram2 = new Mezzo(TRAM, 200);
+       /* Mezzo tram2 = new Mezzo(TRAM, 200);*/
 
-//        Mdao.save(bus2);
-//        Mdao.save(tram1);
+ /*Mdao.save(bus2);
+ Mdao.save(tram1);*/
 //        Mdao.save(tram2);
 
-        //  em.getTransaction().commit();
+ /*em.getTransaction().commit();*/
 
 //        String idbus2inDB = "a3028812-c93d-47b6-b677-5a9ff7b31d3b";
 //        Mezzo trovato = Mdao.findById(idbus2inDB);
@@ -120,11 +120,11 @@ public class Mezzo {
 
         Tratta tratta1 = new Tratta("Roma", "Bologna", 50); // tempoPrevisto = 50
         Tratta tratta2 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 30
-        Tratta tratta3 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 40
+        /*Tratta tratta3 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 40*/
 
-//        trattaDAO.update(tratta1);
-//        trattaDAO.update(tratta2);
-//          trattaDAO.update(tratta3);
+   /* trattaDAO.update(tratta1);
+    trattaDAO.update(tratta2);*/
+       /* trattaDAO.update(tratta3);*/
 //
 //        System.out.println("\nTratta1 Tempo Previsto nel DB: " + tratta1.getTempoPrevisto() + " min");
 //        System.out.println("\nTratta2 Tempo Previsto nel DB: " + tratta2.getTempoPrevisto() + " min");

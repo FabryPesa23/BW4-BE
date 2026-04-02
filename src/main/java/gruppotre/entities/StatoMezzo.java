@@ -64,9 +64,9 @@ public class StatoMezzo {
 //        Mezzo mezzo2 = mezzoDAO.findById(tramId2);
 //           statoManutenzioneDAO.inizializzaStato(mezzo2);
 //
-        String busId = "a304b75a-7096-4a80-8d71-4ce4659cfe8a";
+        String busId = "ea9289c7-8468-421c-ae19-39678e66f7fe";
         Mezzo bus1 = mezzoDAO.findById(busId);
-//           statoManutenzioneDAO.inizializzaStato(bus1);
+       /* statoManutenzioneDAO.inizializzaStato(bus1);*/
 //
 //        String busId2 = "c31211e6-b3f4-4f43-8ae7-d21d7e13f433";
 //        Mezzo bus2 = mezzoDAO.findById(busId2);
@@ -94,7 +94,7 @@ public class StatoMezzo {
 //
 //        Mezzo bus1 = mezzoDAO.findById("c31211e6-b3f4-4f43-8ae7-d21d7e13f433");
         //LocalDate previstaFine = LocalDate.now().plusDays(7);
-//       statoManutenzioneDAO.cambiaStato(bus1, StatoVeicolo.RITARDO, null);
+        /*statoManutenzioneDAO.cambiaStato(bus1, StatoVeicolo.RITARDO, null);*/
 
         // CONTROLLA STATO ATTUALE DOPO MANUTENZINE
 //        StatoMezzo manutenzione = statoManutenzioneDAO.getStatoAttuale(mezzo);

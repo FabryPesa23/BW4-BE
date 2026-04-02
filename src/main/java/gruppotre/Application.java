@@ -379,7 +379,8 @@ public class Application {
                     System.out.println("Sottomenu Manutenzione:");
                     System.out.println("1. Elenco mezzi in servizio");
                     System.out.println("2. Elenco mezzi in manutenzione");
-                    System.out.println("3. Modificare lo stato di un mezzo");
+                    System.out.println("3. Elenco mezzi in ritardo");
+                    System.out.println("4. Modificare lo stato di un mezzo");
                     System.out.print("Scelta: ");
                     String sub = scanner.nextLine();
 
@@ -392,7 +393,21 @@ public class Application {
                         System.out.println("MEZZI ATTUALMENTE IN MANUTENZIONE:");
                         inManut.forEach(m -> System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId()));
                     } else if(sub.equals("3")) {
+                        /* Estrazione diretta tramite JPQL per i mezzi in ritardo */
+                        java.util.List<Mezzo> inRitardo = em.createQuery(
+                                        "SELECT s.mezzo FROM StatoMezzo s WHERE s.stato = :stato AND s.dataFine IS NULL", Mezzo.class)
+                                .setParameter("stato", StatoVeicolo.RITARDO)
+                                .getResultList();
+
+                        System.out.println("MEZZI ATTUALMENTE IN RITARDO:");
+                        if (inRitardo.isEmpty()) {
+                            System.out.println("Nessun mezzo in ritardo al momento. Un miracolo per il trasporto pubblico.");
+                        } else {
+                            inRitardo.forEach(m -> System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId()));
+                        }
+                    } else if(sub.equals("4")) {
                         System.out.println("Inserire l'UUID del mezzo da aggiornare (o 0 per annullare):");
+
                         UUID uuidMezzo = leggiUUIDSicuro(scanner);
                         if (uuidMezzo == null) {
                             System.out.println("Operazione annullata. Ritorno al menu.");
@@ -404,15 +419,15 @@ public class Application {
                         if (mezzoStato == null) {
                             System.out.println("Errore: Mezzo non identificato.");
                         } else {
-                            System.out.println("Selezionare il nuovo stato operativo: 1 per IN SERVIZIO, 2 per RITARDO , 3 per IN MANUTENZIONE");
+                            System.out.println("Selezionare il nuovo stato operativo: 1 per IN SERVIZIO, 2 per RITARDO, 3 per IN MANUTENZIONE");
                             String statoInput = scanner.nextLine();
 
                             if (statoInput.equals("1")) {
                                 statoDAO.cambiaStato(mezzoStato, StatoVeicolo.IN_SERVIZIO, null);
                                 System.out.println("Stato aggiornato: IN SERVIZIO.");
                             } else if(statoInput.equals("2")) {
-                                    statoDAO.cambiaStato(mezzoStato, StatoVeicolo.RITARDO, null);
-                                    System.out.println("Stato aggiornato: RITARDO.");
+                                statoDAO.cambiaStato(mezzoStato, StatoVeicolo.RITARDO, null);
+                                System.out.println("Stato aggiornato: RITARDO.");
                             }
                             else if (statoInput.equals("3")) {
                                 System.out.println("Indicare la durata stimata della manutenzione in giorni (o 0 per annullare):");
@@ -538,9 +553,9 @@ public class Application {
                         break;
                     }
 
-                    // =========================
+                    // =========================================================
                     // 5. RECUPERA PERCORRENZE ESISTENTI PER QUEL MEZZO E TRATTA
-                    // =========================
+                    // =========================================================
                     List<Percorrenza> percorrenze = em.createQuery(
                                     "SELECT p FROM Percorrenza p WHERE p.mezzo = :mezzo AND p.tratta = :tratta",
                                     Percorrenza.class)
