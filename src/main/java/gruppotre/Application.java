@@ -213,76 +213,175 @@ public class Application {
     // ========================
     // SOTTOMENU AMMINISTRATORE
     // ========================
+    /**
+     * Gestisce la logica di amministrazione: estrazione dati statistici,
+     * manutenzione e registrazione delle percorrenze.
+     */
     private static void gestisciMenuAdmin(Scanner scanner, EntityManager em) {
         boolean inMenu = true;
+
+        // Inizializzazione dei DAO per delegare la logica di accesso ai dati
         gruppotre.dao.StatoMezzoDAO statoDAO = new gruppotre.dao.StatoMezzoDAO(em);
+        gruppotre.dao.PercorrenzaDAO percorrenzaDAO = new gruppotre.dao.PercorrenzaDAO(em);
 
         while (inMenu) {
             System.out.println("\n--- AREA AMMINISTRATORE ---");
-            System.out.println("1. Controlla validità tessera");
-            System.out.println("2. Statistiche: Titoli venduti per Punto Vendita");
-            System.out.println("3. Statistiche: Biglietti vidimati per Mezzo");
-            System.out.println("4. Gestione manutenzione mezzi (DAO Colleghi)");
-            System.out.println("0. Torna indietro");
+            System.out.println("1. Verificare la validità di una tessera");
+            System.out.println("2. Statistiche: Totale titoli emessi per Punto Vendita");
+            System.out.println("3. Statistiche: Totale biglietti vidimati per Mezzo");
+            System.out.println("4. Gestione stato e manutenzione mezzi");
+            System.out.println("5. Registrare una nuova Percorrenza");
+            System.out.println("6. Statistiche: Storico percorrenze per Mezzo");
+            System.out.println("0. Tornare al menu precedente");
             System.out.print("Scelta: ");
 
             String input = scanner.nextLine();
 
             switch (input) {
                 case "1":
-                    System.out.println("Inserisci l'ID della Tessera da controllare:");
+                    System.out.println("Inserire l'ID della Tessera:");
                     long idTessera = leggiNumeroSicuro(scanner);
                     Tessera t = em.find(Tessera.class, idTessera);
+
                     if (t == null) {
-                        System.out.println("ERRORE: Tessera non trovata.");
+                        System.out.println("Errore: Tessera non trovata nel database.");
                     } else {
-                        System.out.println("Tessera ID " + t.getId() + " di: " + t.getUtente().getNome() + " " + t.getUtente().getCognome());
+                        System.out.println("Tessera ID " + t.getId() + " intestata a: " + t.getUtente().getNome() + " " + t.getUtente().getCognome());
                         if (t.getDataScadenza().isBefore(java.time.LocalDate.now())) {
-                            System.out.println("Stato: SCADUTA il " + t.getDataScadenza());
+                            System.out.println("Stato: SCADUTA in data " + t.getDataScadenza());
                         } else {
                             System.out.println("Stato: VALIDA fino al " + t.getDataScadenza());
                         }
                     }
                     break;
+
                 case "2":
-                    System.out.println("Inserisci l'ID del Punto Vendita (es. 1):");
+                    System.out.println("Inserire l'ID del Punto Vendita:");
                     long idPunto = leggiNumeroSicuro(scanner);
                     Long venduti = (Long) em.createQuery("SELECT COUNT(tv) FROM TitoloViaggio tv WHERE tv.puntoEmissione.id = :id")
                             .setParameter("id", idPunto)
                             .getSingleResult();
-                    System.out.println("-> Il Punto Vendita ID " + idPunto + " ha emesso un totale di " + venduti + " titoli di viaggio.");
+                    System.out.println("Il Punto Vendita indicato ha emesso un totale di " + venduti + " titoli.");
                     break;
+
                 case "3":
-                    System.out.println("Inserisci l'UUID del Mezzo (es. a3028812-...):");
-                    UUID idMezzo = leggiUUIDSicuro(scanner);
+                    System.out.println("Inserire l'UUID del Mezzo:");
+                    UUID idMezzoVid = leggiUUIDSicuro(scanner);
                     Long vidimati = (Long) em.createQuery("SELECT COUNT(b) FROM Biglietto b WHERE b.mezzo.id = :id")
-                            .setParameter("id", idMezzo)
+                            .setParameter("id", idMezzoVid)
                             .getSingleResult();
-                    System.out.println("-> Sul mezzo " + idMezzo + " sono stati vidimati " + vidimati + " biglietti.");
+                    System.out.println("Sul mezzo indicato sono stati vidimati " + vidimati + " biglietti.");
                     break;
+
                 case "4":
-                    System.out.println("1. Visualizza mezzi in servizio\n2. Visualizza mezzi in manutenzione");
+                    System.out.println("Sottomenu Manutenzione:");
+                    System.out.println("1. Elenco mezzi in servizio");
+                    System.out.println("2. Elenco mezzi in manutenzione");
+                    System.out.println("3. Modificare lo stato di un mezzo");
                     System.out.print("Scelta: ");
                     String sub = scanner.nextLine();
+
                     if(sub.equals("1")) {
                         java.util.List<Mezzo> inServizio = statoDAO.findMezziInServizio();
-                        System.out.println("MEZZI IN SERVIZIO:");
-                        if(inServizio.isEmpty()) System.out.println("Nessun mezzo in servizio.");
-                        inServizio.forEach(m -> System.out.println("- " + m.getTipo() + " [" + m.getId() + "]"));
+                        System.out.println("MEZZI ATTUALMENTE IN SERVIZIO:");
+                        inServizio.forEach(m -> System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId()));
                     } else if(sub.equals("2")) {
                         java.util.List<Mezzo> inManut = statoDAO.findMezziInManutenzione();
-                        System.out.println("MEZZI IN MANUTENZIONE:");
-                        if(inManut.isEmpty()) System.out.println("Nessun mezzo in manutenzione.");
-                        inManut.forEach(m -> System.out.println("- " + m.getTipo() + " [" + m.getId() + "]"));
+                        System.out.println("MEZZI ATTUALMENTE IN MANUTENZIONE:");
+                        inManut.forEach(m -> System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId()));
+                    } else if(sub.equals("3")) {
+                        System.out.println("Inserire l'UUID del mezzo da aggiornare:");
+                        UUID uuidMezzo = leggiUUIDSicuro(scanner);
+                        Mezzo mezzoStato = em.find(Mezzo.class, uuidMezzo);
+
+                        if (mezzoStato == null) {
+                            System.out.println("Errore: Mezzo non identificato.");
+                        } else {
+                            System.out.println("Selezionare il nuovo stato operativo: 1 per IN SERVIZIO, 2 per IN MANUTENZIONE");
+                            String statoInput = scanner.nextLine();
+
+                            if (statoInput.equals("1")) {
+                                statoDAO.cambiaStato(mezzoStato, StatoVeicolo.IN_SERVIZIO, null);
+                                System.out.println("Stato aggiornato: IN SERVIZIO.");
+                            } else if (statoInput.equals("2")) {
+                                System.out.println("Indicare la durata stimata della manutenzione in giorni:");
+                                long giorni = leggiNumeroSicuro(scanner);
+                                java.time.LocalDate finePrevista = java.time.LocalDate.now().plusDays(giorni);
+                                statoDAO.cambiaStato(mezzoStato, StatoVeicolo.IN_MANUTENZIONE, finePrevista);
+                                System.out.println("Stato aggiornato: IN MANUTENZIONE. Fine prevista: " + finePrevista);
+                            } else {
+                                System.out.println("Errore: Opzione non valida.");
+                            }
+                        }
                     } else {
-                        System.out.println("Scelta non valida.");
+                        System.out.println("Errore: Opzione non valida.");
                     }
                     break;
+
+                case "5":
+                    System.out.println("Inserire l'UUID della Tratta:");
+                    UUID idTratta = leggiUUIDSicuro(scanner);
+
+                    System.out.println("\nELENCO MEZZI DISPONIBILI A SISTEMA:");
+                    java.util.List<Mezzo> listaMezzi = em.createQuery("SELECT m FROM Mezzo m", Mezzo.class).getResultList();
+                    for (Mezzo m : listaMezzi) {
+                        System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId());
+                    }
+                    System.out.println("----------------------------------------");
+
+                    System.out.println("Inserire l'UUID del Mezzo da assegnare alla percorrenza:");
+                    UUID idMezzoPercorrenza = leggiUUIDSicuro(scanner);
+
+                    Tratta tratta = em.find(Tratta.class, idTratta);
+                    Mezzo mezzoPercorrenza = em.find(Mezzo.class, idMezzoPercorrenza);
+
+                    if (tratta == null || mezzoPercorrenza == null) {
+                        System.out.println("Errore: Tratta o Mezzo non presenti a sistema.");
+                    } else {
+                        // Delega del salvataggio al PercorrenzaDAO
+                        Percorrenza nuovaCorsa = new Percorrenza(mezzoPercorrenza, tratta, java.time.LocalDateTime.now());
+                        percorrenzaDAO.save(nuovaCorsa);
+
+                        System.out.println("\nRegistrazione percorrenza completata.");
+                        System.out.println("Dettagli percorso: " + tratta.getZonaPartenza() + " -> " + tratta.getCapolinea());
+                        System.out.println("Mezzo operativo: " + mezzoPercorrenza.getTipo());
+                        System.out.println("Tempo di percorrenza stimato (condizioni ideali): " + tratta.getTempoBase() + " min");
+                        System.out.println("Tempo di percorrenza effettivo (traffico/meteo inclusi): " + nuovaCorsa.getTempoEffettivo() + " min");
+                    }
+                    break;
+
+                case "6":
+                    // Nuova funzionalità: integrazione del metodo findByMezzoId
+                    System.out.println("\nELENCO MEZZI DISPONIBILI A SISTEMA:");
+                    java.util.List<Mezzo> mezziStorico = em.createQuery("SELECT m FROM Mezzo m", Mezzo.class).getResultList();
+                    for (Mezzo m : mezziStorico) {
+                        System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId());
+                    }
+                    System.out.println("----------------------------------------");
+
+                    System.out.println("Inserire l'UUID del Mezzo per analizzare lo storico delle percorrenze:");
+                    UUID idMezzoStorico = leggiUUIDSicuro(scanner);
+
+                    // Il DAO richiede una String, quindi convertiamo l'UUID estratto in modo sicuro
+                    java.util.List<Percorrenza> storico = percorrenzaDAO.findByMezzoId(idMezzoStorico.toString());
+
+                    if (storico.isEmpty()) {
+                        System.out.println("Nessuna percorrenza registrata a sistema per il mezzo selezionato.");
+                    } else {
+                        System.out.println("\nSTORICO PERCORRENZE - MEZZO ID: " + idMezzoStorico);
+                        for (Percorrenza p : storico) {
+                            System.out.println("- Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea() +
+                                    " | Data: " + p.getDataPartenza() +
+                                    " | Tempo rilevato: " + p.getTempoEffettivo() + " min");
+                        }
+                    }
+                    break;
+
                 case "0":
                     inMenu = false;
                     break;
                 default:
-                    System.out.println("ERRORE: Scelta non valida.");
+                    System.out.println("Errore: Opzione non valida.");
             }
         }
     }
