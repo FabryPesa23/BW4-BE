@@ -53,4 +53,41 @@ public class TitoloViaggioDAO {
             }
         }
     }
+
+    // ricerca per id
+    public TitoloViaggio findById(Long id) {
+        return em.find(TitoloViaggio.class, id);
+    }
+
+    // conteggio di titoli per periodo
+    public Long countTitoliTotaliPerPeriodo(LocalDateTime inizio, LocalDateTime fine) {
+        return em.createQuery(
+                        "SELECT COUNT(t) FROM TitoloViaggio t WHERE t.dataEmissione BETWEEN :inizio AND :fine",
+                        Long.class)
+                .setParameter("inizio", inizio)
+                .setParameter("fine", fine)
+                .getSingleResult();
+    }
+
+    // conteggio di titoli per punto d'emissione
+    public Long countTitoliPerPuntoEmissione(Long idPunto) {
+        return em.createQuery(
+                        "SELECT COUNT(t) FROM TitoloViaggio t WHERE t.puntoEmissione.id = :idPunto",
+                        Long.class)
+                .setParameter("idPunto", idPunto)
+                .getSingleResult();
+    }
+
+    // conteggi combinati
+//    public Long countTitoliPerPuntoEPeriodo(Long idPunto, LocalDateTime inizio, LocalDateTime fine) {
+//        return em.createQuery(
+//                        "SELECT COUNT(t) FROM TitoloViaggio t "
+//                              "WHERE t.puntoEmissione.id = :idPunto " +
+//                                "AND t.dataEmissione BETWEEN :inizio AND :fine",
+//                        Long.class)
+//                .setParameter("idPunto", idPunto)
+//                .setParameter("inizio", inizio)
+//                .setParameter("fine", fine)
+//                .getSingleResult();
+
 }
