@@ -53,4 +53,9 @@ public class TitoloViaggioDAO {
             }
         }
     }
+
+    // ricerca per id
+    public TitoloViaggio findById(Long id) {
+        return em.find(TitoloViaggio.class, id);
+    }
 }
