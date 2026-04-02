@@ -493,20 +493,23 @@ public class Application {
 
                         for (Percorrenza p : storico) {
 
-                            int tempoPrevisto = p.calcolaTempoPrevisto(p.getMezzo(), p.getTratta());
+
+                          //  int tempoPrevisto = p.calcolaTempoPrevisto(p.getMezzo(), p.getTratta());
                             int tempoEffettivo = p.getTempoEffettivo();
+                            Tratta t1 = p.getTratta();
+                            int tempoBase = t1.getTempoBase();
                             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
                             System.out.println("- Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea());
                             System.out.println("  Data Partenza: " + p.getDataPartenza().format(dtf));
-                            System.out.println("  Tempo Previsto (Ideale):  " + tempoPrevisto + " min");
+                            System.out.println("  Tempo Previsto (Ideale):  " + t1.getTempoBase() + " min");
                             System.out.println("  Tempo Effettivo (Reale):  " + tempoEffettivo + " min");
 
                             /* Calcolo dello scostamento temporale per le statistiche */
-                            if (tempoEffettivo > tempoPrevisto) {
-                                System.out.println("  Stato: RITARDO di " + (tempoEffettivo - tempoPrevisto) + " min");
-                            } else if (tempoEffettivo < tempoPrevisto) {
-                                System.out.println("  Stato: ANTICIPO di " + (tempoPrevisto - tempoEffettivo) + " min");
+                            if (tempoEffettivo > tempoBase) {
+                                System.out.println("  Stato: RITARDO di " + (tempoEffettivo - tempoBase) + " min");
+                            } else if (tempoEffettivo < tempoBase) {
+                                System.out.println("  Stato: ANTICIPO di " + (tempoBase - tempoEffettivo) + " min");
                             } else {
                                 System.out.println("  Stato: IN PERFETTO ORARIO");
                             }
