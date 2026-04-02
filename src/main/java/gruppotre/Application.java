@@ -1,5 +1,7 @@
 package gruppotre;
 
+import gruppotre.dao.MezzoDAO;
+import gruppotre.dao.TrattaDAO;
 import gruppotre.entities.*;
 import gruppotre.enums.*;
 import jakarta.persistence.EntityManager;
@@ -9,6 +11,7 @@ import jakarta.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -470,52 +473,90 @@ public class Application {
                     break;
 
                 case "6":
-                    System.out.println("\nELENCO MEZZI DISPONIBILI A SISTEMA:");
-                    java.util.List<Mezzo> mezziStorico = em.createQuery("SELECT m FROM Mezzo m", Mezzo.class).getResultList();
-                    for (Mezzo m : mezziStorico) {
-                        System.out.println("- Tipo: " + m.getTipo() + " | UUID: " + m.getId());
+                    System.out.println("\n--- CREAZIONE PERCORRENZA ---");
+
+                    // =========================
+                    // 1. MOSTRA MEZZI
+                    // =========================
+                    System.out.println("\nELENCO MEZZI:");
+                    List<Mezzo> mezzi = em.createQuery("SELECT m FROM Mezzo m", Mezzo.class).getResultList();
+
+                    for (Mezzo m : mezzi) {
+                        System.out.println("- " + m.getTipo() + " | UUID: " + m.getId());
                     }
                     System.out.println("----------------------------------------");
 
-                    System.out.println("Inserire l'UUID del Mezzo per analizzare lo storico delle percorrenze (o 0 per annullare):");
-                    UUID idMezzoStorico = leggiUUIDSicuro(scanner);
-                    if (idMezzoStorico == null) {
-                        System.out.println("Operazione annullata. Ritorno al menu.");
+                    // =========================
+                    // 2. SCELTA MEZZO
+                    // =========================
+                    System.out.println("Inserisci UUID Mezzo:");
+                    UUID idMezzo = leggiUUIDSicuro(scanner);
+                    if (idMezzo == null) break;
+
+                    MezzoDAO mezzoDAO = new MezzoDAO(em);
+
+                    Mezzo mezzo = mezzoDAO.findById(idMezzo.toString());
+
+                    if (mezzo == null) {
+                        System.out.println("Mezzo non trovato");
                         break;
                     }
 
-                    java.util.List<Percorrenza> storico = percorrenzaDAO.findByMezzoId(idMezzoStorico.toString());
+                    // =========================
+                    // 3. MOSTRA TRATTE
+                    // =========================
+                    System.out.println("\nELENCO TRATTE:");
+                    List<Tratta> tratte = em.createQuery("SELECT t FROM Tratta t", Tratta.class).getResultList();
 
-                    if (storico.isEmpty()) {
-                        System.out.println("Nessuna percorrenza registrata a sistema per il mezzo selezionato.");
-                    } else {
-                        System.out.println("\nANALISI PERCORRENZE - MEZZO ID: " + idMezzoStorico);
-
-                        for (Percorrenza p : storico) {
-
-
-                          //  int tempoPrevisto = p.calcolaTempoPrevisto(p.getMezzo(), p.getTratta());
-                            int tempoEffettivo = p.getTempoEffettivo();
-                            Tratta t1 = p.getTratta();
-                            int tempoBase = t1.getTempoBase();
-                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-                            System.out.println("- Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea());
-                            System.out.println("  Data Partenza: " + p.getDataPartenza().format(dtf));
-                            System.out.println("  Tempo Previsto (Ideale):  " + t1.getTempoBase() + " min");
-                            System.out.println("  Tempo Effettivo (Reale):  " + tempoEffettivo + " min");
-
-                            /* Calcolo dello scostamento temporale per le statistiche */
-                            if (tempoEffettivo > tempoBase) {
-                                System.out.println("  Stato: RITARDO di " + (tempoEffettivo - tempoBase) + " min");
-                            } else if (tempoEffettivo < tempoBase) {
-                                System.out.println("  Stato: ANTICIPO di " + (tempoBase - tempoEffettivo) + " min");
-                            } else {
-                                System.out.println("  Stato: IN PERFETTO ORARIO");
-                            }
-                            System.out.println("  --------------------------------------");
-                        }
+                    for (Tratta t1 : tratte) {
+                        System.out.println("- " + t1.getZonaPartenza() + " -> " + t1.getCapolinea()
+                                + " | Tempo base: " + t1.getTempoBase()
+                                + " | UUID: " + t1.getId());
                     }
+                    System.out.println("----------------------------------------");
+
+                    // =========================
+                    // 4. SCELTA TRATTA
+                    // =========================
+                    System.out.println("Inserisci UUID Tratta:");
+                    UUID idTratta1 = leggiUUIDSicuro(scanner);
+                    if (idTratta1 == null) break;
+                    TrattaDAO trattaDAO = new TrattaDAO(em);
+                    Tratta tratta1 = trattaDAO.findById(idTratta1.toString());
+
+                    if (tratta1 == null) {
+                        System.out.println("Tratta non trovata");
+                        break;
+                    }
+
+                    // =========================
+                    // 5. CREA PERCORRENZA
+                    // =========================
+                    Percorrenza p = new Percorrenza(mezzo, tratta1, LocalDateTime.now());
+                    percorrenzaDAO.save(p);
+
+                    // =========================
+                    // 6. STAMPA RISULTATO
+                    // =========================
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+                    System.out.println("\nPERCORRENZA CREATA:");
+                    System.out.println("- Mezzo: " + mezzo.getTipo());
+                    System.out.println("- Tratta: " + tratta1.getZonaPartenza() + " -> " + tratta1.getCapolinea());
+                    System.out.println("- Data partenza: " + p.getDataPartenza().format(dtf));
+                    System.out.println("- Tempo effettivo: " + p.getTempoEffettivo() + " min");
+
+                    int tempoBase = tratta1.getTempoBase();
+                    int tempoEffettivo = p.getTempoEffettivo();
+
+                    if (tempoEffettivo > tempoBase) {
+                        System.out.println("- Stato: RITARDO di " + (tempoEffettivo - tempoBase) + " min");
+                    } else if (tempoEffettivo < tempoBase) {
+                        System.out.println("- Stato: ANTICIPO di " + (tempoBase - tempoEffettivo) + " min");
+                    } else {
+                        System.out.println("- Stato: IN ORARIO");
+                    }
+
                     break;
 
                 case "0":
