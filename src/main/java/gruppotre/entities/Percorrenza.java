@@ -2,7 +2,9 @@ package gruppotre.entities;
 
 import gruppotre.dao.MezzoDAO;
 import gruppotre.dao.PercorrenzaDAO;
+import gruppotre.dao.StatoMezzoDAO;
 import gruppotre.dao.TrattaDAO;
+import gruppotre.enums.StatoVeicolo;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -42,7 +44,7 @@ public class Percorrenza {
         // METODO PER AGGIUNGERE NUOVA PERCORRENZA CON TRATTA E MEZZO
         // CALCOLA ANCHE IL TEMPO-EFFETTIVO IN BASE AL MEZZO
         Mezzo mezzo = Mdao.findById("a304b75a-7096-4a80-8d71-4ce4659cfe8a");
-        Tratta tratta = trattaDAO.findById("763f91f1-3d48-408d-bf81-1e268a905432");
+        Tratta tratta = trattaDAO.findById("9244167e-88ba-484f-9802-543efa579c1b");
 
         if (mezzo == null ) {
             System.out.println("Mezzo non trovato");
@@ -56,7 +58,7 @@ public class Percorrenza {
         Percorrenza p1 = new Percorrenza(mezzo, tratta, LocalDateTime.now());
 
         em.getTransaction().begin();
-//        em.persist(p1);
+        em.persist(p1);
         em.getTransaction().commit();
 
         // METODO PER VEDERE TUTTE LE PERCORRENZE
@@ -97,17 +99,18 @@ public class Percorrenza {
             case TRAM -> tempo -= 10; // temp_previsto - 10 tempo minore , tram + veloce
         }
 
-        return tempo;
-    }
+        if (mezzo.getStati() != null && !mezzo.getStati().isEmpty()) {
+            // Trova lo stato attuale (quello senza dataFine)
+            StatoMezzo statoAttuale = mezzo.getStati().stream()
+                    .filter(s -> s.getDataFine() == null)
+                    .findFirst()
+                    .orElse(null);
 
-    // CALCOLA TEMPO IN BASE AL MEZZO E ALLA TRATTA
-    public int calcolaTempoPrevisto(Mezzo mezzo, Tratta tratta){
-        int tempo = tratta.getTempoBase();
-
-        switch (mezzo.getTipo()) {
-            case BUS -> tempo += 0;
-            case TRAM -> tempo -= 10;
+            if (statoAttuale != null && statoAttuale.getStato() == StatoVeicolo.RITARDO) {
+                tempo += 5; // Aggiunge 5 minuti se è in ritardo
+            }
         }
+
         return tempo;
     }
 
@@ -136,7 +139,7 @@ public class Percorrenza {
         return tratta;
     }
 
-    public void setMezzo(Mezzo mezzo) {
+    public void setMezzo(Mezzo mezzo, StatoVeicolo statoAttuale) {
         this.mezzo = mezzo;
         this.tempoEffettivo = calcoloTempo();
     }

@@ -114,5 +114,19 @@ public class StatoMezzoDAO {
             return Collections.emptyList();
         }
     }
+
+    // MEZZI ATTUALI IN RITARDO
+    public List<Mezzo> findMezziInRitardo() {
+        try {
+            return em.createQuery(
+                            "SELECT s.mezzo FROM StatoMezzo s WHERE s.stato = :stato AND s.dataFine IS NULL",
+                            Mezzo.class)
+                    .setParameter("stato", StatoVeicolo.RITARDO)
+                    .getResultList();
+        } catch (PersistenceException e) {
+            System.out.println("Errore query mezzi in ritardo: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
     }
 

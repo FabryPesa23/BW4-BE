@@ -404,13 +404,17 @@ public class Application {
                         if (mezzoStato == null) {
                             System.out.println("Errore: Mezzo non identificato.");
                         } else {
-                            System.out.println("Selezionare il nuovo stato operativo: 1 per IN SERVIZIO, 2 per IN MANUTENZIONE");
+                            System.out.println("Selezionare il nuovo stato operativo: 1 per IN SERVIZIO, 2 per RITARDO , 3 per IN MANUTENZIONE");
                             String statoInput = scanner.nextLine();
 
                             if (statoInput.equals("1")) {
                                 statoDAO.cambiaStato(mezzoStato, StatoVeicolo.IN_SERVIZIO, null);
                                 System.out.println("Stato aggiornato: IN SERVIZIO.");
-                            } else if (statoInput.equals("2")) {
+                            } else if(statoInput.equals("2")) {
+                                    statoDAO.cambiaStato(mezzoStato, StatoVeicolo.RITARDO, null);
+                                    System.out.println("Stato aggiornato: RITARDO.");
+                            }
+                            else if (statoInput.equals("3")) {
                                 System.out.println("Indicare la durata stimata della manutenzione in giorni (o 0 per annullare):");
                                 long giorni = leggiNumeroSicuro(scanner);
                                 if (giorni == -1) {
@@ -535,32 +539,40 @@ public class Application {
                     }
 
                     // =========================
-                    // 5. CREA PERCORRENZA
+                    // 5. RECUPERA PERCORRENZE ESISTENTI PER QUEL MEZZO E TRATTA
                     // =========================
-                    Percorrenza p = new Percorrenza(mezzo, tratta1, LocalDateTime.now());
-                    percorrenzaDAO.save(p);
+                    List<Percorrenza> percorrenze = em.createQuery(
+                                    "SELECT p FROM Percorrenza p WHERE p.mezzo = :mezzo AND p.tratta = :tratta",
+                                    Percorrenza.class)
+                            .setParameter("mezzo", mezzo)
+                            .setParameter("tratta", tratta1)
+                            .getResultList();
 
                     // =========================
                     // 6. STAMPA RISULTATO
                     // =========================
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-                    System.out.println("\nPERCORRENZA CREATA:");
-                    System.out.println("- Mezzo: " + mezzo.getTipo());
-                    System.out.println("- Tratta: " + tratta1.getZonaPartenza() + " -> " + tratta1.getCapolinea());
-                    System.out.println("- Data partenza: " + p.getDataPartenza().format(dtf));
-                    System.out.println("- Tempo effettivo: " + p.getTempoEffettivo() + " min");
+                    if (percorrenze.isEmpty()){
+                        System.out.println("\nNessuna percorrenza registrata per questo mezzo e tratta.");
+                    }else{
 
-                    int tempoBase = tratta1.getTempoBase();
-                    int tempoEffettivo = p.getTempoEffettivo();
+                    for (Percorrenza perc : percorrenze) {
+                        int diff = perc.getTempoEffettivo() - perc.getTratta().getTempoBase();
+                        String stato = diff > 0 ? "RITARDO di " + diff + " min" :
+                                diff < 0 ? "ANTICIPO di " + (-diff) + " min" :
+                                        "IN ORARIO";
 
-                    if (tempoEffettivo > tempoBase) {
-                        System.out.println("- Stato: RITARDO di " + (tempoEffettivo - tempoBase) + " min");
-                    } else if (tempoEffettivo < tempoBase) {
-                        System.out.println("- Stato: ANTICIPO di " + (tempoBase - tempoEffettivo) + " min");
-                    } else {
-                        System.out.println("- Stato: IN ORARIO");
+                        System.out.println("\nMezzo: " + perc.getMezzo().getTipo());
+                        System.out.println("Tratta: " + perc.getTratta().getZonaPartenza() + " -> " + perc.getTratta().getCapolinea());
+                        System.out.println("Data partenza: " + perc.getDataPartenza().format(dtf));
+                        System.out.println("Tempo effettivo: " + perc.getTempoEffettivo());
+                        System.out.println("Stato: " + stato);
+                        System.out.println("------");
                     }
+                    }
+
+
 
                     break;
 

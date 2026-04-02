@@ -50,7 +50,7 @@ public class Tratta {
         return tempoBase;
     }
 
-    public void setTempoBase(int tempoPrevisto) {
+    public void setTempoBase(int tempoBase) {
         this.tempoBase = tempoBase;
     }
 
