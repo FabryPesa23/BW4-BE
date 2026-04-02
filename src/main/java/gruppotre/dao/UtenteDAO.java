@@ -20,7 +20,7 @@ public class UtenteDAO {
             et.begin();
             em.persist(utente);
             et.commit();
-            System.out.println("Salvataggio riuscito: Utente e Tessera inseriti.");
+            System.out.println("Salvataggio riuscito: Utente e Tessera inseriti nel database.");
         } catch (Exception e) {
             if (et.isActive()) et.rollback();
             e.printStackTrace();
@@ -29,10 +29,6 @@ public class UtenteDAO {
 
     public Utente findById(Long id) {
         return em.find(Utente.class, id);
-    }
-
-    public List<Utente> findAll() {
-        return em.createQuery("SELECT u FROM Utente u", Utente.class).getResultList();
     }
 
     public Utente findByNumeroTessera(Long numeroTessera) {
@@ -59,12 +55,15 @@ public class UtenteDAO {
                 u.getTessera().setDataEmissione(LocalDate.now());
                 u.getTessera().setDataScadenza(LocalDate.now().plusYears(1));
                 em.merge(u);
-                System.out.println("Tessera rinnovata per un altro anno.");
             }
             et.commit();
         } catch (Exception e) {
             if (et.isActive()) et.rollback();
             e.printStackTrace();
         }
+    }
+
+    public List<Utente> findAll() {
+        return em.createQuery("SELECT u FROM Utente u", Utente.class).getResultList();
     }
 }
