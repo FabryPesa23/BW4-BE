@@ -25,6 +25,7 @@ public class PercorrenzaDAO {
         }
     }
 
+    // CERCA PERCORRENZA TRAMITE ID
     public Percorrenza findById(String idString) {
         try {
             return em.find(Percorrenza.class, java.util.UUID.fromString(idString));
@@ -34,6 +35,25 @@ public class PercorrenzaDAO {
         }
     }
 
+    // CERCA PERCORRENZA TRAMITE MEZZO ID
+    public List<Percorrenza> findByMezzoId(String mezzoId) {
+        try {
+            UUID id = UUID.fromString(mezzoId);
+
+            return em.createQuery(
+                            "SELECT p FROM Percorrenza p WHERE p.mezzo.id = :id",
+                            Percorrenza.class)
+                    .setParameter("id", id)
+                    .getResultList();
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ID non valido: " + mezzoId);
+            return Collections.emptyList();
+        }
+    }
+
+
+    // MOSTRA TUTTE LE PERCORRENZE
     public List<Percorrenza> findAll() {
         try {
             return em.createQuery("SELECT p FROM Percorrenza p", Percorrenza.class)

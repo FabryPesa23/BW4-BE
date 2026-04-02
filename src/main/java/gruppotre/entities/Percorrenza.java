@@ -100,6 +100,17 @@ public class Percorrenza {
         return tempo;
     }
 
+    // CALCOLA TEMPO IN BASE AL MEZZO E ALLA TRATTA
+    public int calcolaTempoPrevisto(Mezzo mezzo, Tratta tratta){
+        int tempo = tratta.getTempoBase();
+
+        switch (mezzo.getTipo()) {
+            case BUS -> tempo += 0;
+            case TRAM -> tempo -= 10;
+        }
+        return tempo;
+    }
+
 // ---------------- GETTER/SETTER ------------------
 
     public UUID getId() {
