@@ -8,6 +8,7 @@ import jakarta.persistence.Persistence;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -365,13 +366,15 @@ public class Application {
                     // Il DAO richiede una String, quindi convertiamo l'UUID estratto in modo sicuro
                     java.util.List<Percorrenza> storico = percorrenzaDAO.findByMezzoId(idMezzoStorico.toString());
 
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
                     if (storico.isEmpty()) {
                         System.out.println("Nessuna percorrenza registrata a sistema per il mezzo selezionato.");
                     } else {
                         System.out.println("\nSTORICO PERCORRENZE - MEZZO ID: " + idMezzoStorico);
                         for (Percorrenza p : storico) {
                             System.out.println("- Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea() +
-                                    " | Data: " + p.getDataPartenza() +
+                                    " | Data: " + p.getDataPartenza().format(dtf) +
                                     " | Tempo rilevato: " + p.getTempoEffettivo() + " min");
                         }
                     }
