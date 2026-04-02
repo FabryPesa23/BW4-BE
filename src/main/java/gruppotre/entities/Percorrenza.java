@@ -1,8 +1,13 @@
 package gruppotre.entities;
 
+import gruppotre.dao.MezzoDAO;
+import gruppotre.dao.PercorrenzaDAO;
+import gruppotre.dao.TrattaDAO;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +33,47 @@ public class Percorrenza {
     private int tempoEffettivo; // minuti
 
     public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("gruppotre");
+        EntityManager em = emf.createEntityManager();
 
+        MezzoDAO Mdao = new MezzoDAO(em);
+        TrattaDAO trattaDAO = new TrattaDAO(em);
+
+        // METODO PER AGGIUNGERE NUOVA PERCORRENZA CON TRATTA E MEZZO
+        // CALCOLA ANCHE IL TEMPO-EFFETTIVO IN BASE AL MEZZO
+        Mezzo mezzo = Mdao.findById("a304b75a-7096-4a80-8d71-4ce4659cfe8a");
+        Tratta tratta = trattaDAO.findById("763f91f1-3d48-408d-bf81-1e268a905432");
+
+        if (mezzo == null ) {
+            System.out.println("Mezzo non trovato");
+            return;
+        }
+        if (tratta == null ) {
+            System.out.println("Tratta non trovato");
+            return;
+        }
+
+        Percorrenza p1 = new Percorrenza(mezzo, tratta, LocalDateTime.now());
+
+        em.getTransaction().begin();
+//        em.persist(p1);
+        em.getTransaction().commit();
+
+        // METODO PER VEDERE TUTTE LE PERCORRENZE
+        PercorrenzaDAO pDao = new PercorrenzaDAO(em);
+        List<Percorrenza> percorrenze = pDao.findAll();
+
+        // SERVE PER 'FORMATTARE LA DATA' COSI ESCE MEGLIO QUANDO SOUT IN
+        // CONSOLE PRINTA LA DATA E NON ESCE ES: 2026-04-01T12:01:37.736699
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        for (Percorrenza p : percorrenze) {
+            System.out.println("Mezzo: " + p.getMezzo().getTipo());
+            System.out.println("Tratta: " + p.getTratta().getZonaPartenza() + " -> " + p.getTratta().getCapolinea());
+            System.out.println("Data partenza: " + p.getDataPartenza().format(dtf));
+            System.out.println("Tempo effettivo: " + p.getTempoEffettivo());
+            System.out.println("------");
+        }
     }
 
     // --------------------- COSTRUTTORI ------------------
@@ -90,4 +135,14 @@ public class Percorrenza {
         this.tempoEffettivo = calcoloTempo();
     }
 
+    @Override
+    public String toString() {
+        return "Percorrenza{" +
+                "id=" + id +
+                ", mezzo=" + mezzo +
+                ", tratta=" + tratta +
+                ", dataPartenza=" + dataPartenza +
+                ", tempoEffettivo=" + tempoEffettivo +
+                '}';
+    }
 }

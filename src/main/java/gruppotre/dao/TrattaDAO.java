@@ -3,6 +3,7 @@ package gruppotre.dao;
 import gruppotre.entities.Tratta;
 import gruppotre.enums.TipoVeicolo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Id;
 import jakarta.persistence.PersistenceException;
 
 import java.util.Collections;
@@ -17,8 +18,9 @@ public class TrattaDAO {
         this.em = em;
     }
 
-    public Tratta findById(UUID id) {
+    public Tratta findById(String idString) {
         try {
+            UUID id = UUID.fromString(idString);
             return em.find(Tratta.class, id);
         } catch (PersistenceException e) {
             System.out.println("Errore di persistenza: " + e.getMessage());

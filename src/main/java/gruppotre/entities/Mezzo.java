@@ -122,27 +122,36 @@ public class Mezzo {
         Tratta tratta2 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 30
         Tratta tratta3 = new Tratta("Milano", "Torino", 40); // tempoPrevisto = 40
 
-//        trattaDAO.update(tratta1);
-//        trattaDAO.update(tratta2);
-//          trattaDAO.update(tratta3);
+        trattaDAO.update(tratta1);
+        trattaDAO.update(tratta2);
+          trattaDAO.update(tratta3);
 //
 //        System.out.println("\nTratta1 Tempo Previsto nel DB: " + tratta1.getTempoPrevisto() + " min");
 //        System.out.println("\nTratta2 Tempo Previsto nel DB: " + tratta2.getTempoPrevisto() + " min");
 
-        List<Tratta> tratteDaRoma = trattaDAO.findByZonaPartenza("Roma");
-        System.out.println("\nTratte in partenza da Roma: \n");
-        for (Tratta t : tratteDaRoma) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + " : " + t.getTempoBase() + " min");
-        }
+//        List<Tratta> tratteDaRoma = trattaDAO.findByZonaPartenza("Roma");
+//        System.out.println("\nTratte in partenza da Roma: \n");
+//        for (Tratta t : tratteDaRoma) {
+//            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " + " : " + t.getTempoBase() + " min");
+//        }
+//
+//        List<Tratta> tratteDaMilano = trattaDAO.findByZonaPartenza("Milano");
+//        System.out.println("\nTratte in partenza da Milano: \n");
+//        for (Tratta t : tratteDaMilano) {
+//            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " +  " : " + t.getTempoBase() + " min");
+//        }
 
-        List<Tratta> tratteDaMilano = trattaDAO.findByZonaPartenza("Milano");
-        System.out.println("\nTratte in partenza da Milano: \n");
-        for (Tratta t : tratteDaMilano) {
-            System.out.println("- " + t.getZonaPartenza() + " -> " + t.getCapolinea() + ", tempo previsto per " +  " : " + t.getTempoBase() + " min");
+        List<Mezzo> mezzi = em.createQuery("SELECT m FROM Mezzo m", Mezzo.class).getResultList();
+
+        System.out.println("MEZZI NEL DB:");
+        for (Mezzo m : mezzi) {
+            System.out.println(m.getId());
         }
 
         em.close();
         emf.close();
     }
+
+
 
 }
