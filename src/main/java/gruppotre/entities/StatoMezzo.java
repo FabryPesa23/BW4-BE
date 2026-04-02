@@ -73,9 +73,12 @@ public class StatoMezzo {
             System.out.println("\nLo stato attuale del mezzo è: " + statoAttuale.getStato());
         }
 
-        // CAMBIO STATO
+        // CAMBIO STATO (METTERE PREVISTAFINE SE MEZZO VA IN_MANUTENZIONE
+        // SE MEZZO RITORNA IN_SERVIZIO SI METTE NULL)
+//
+//        Mezzo bus1 = mezzoDAO.findById("a304b75a-7096-4a80-8d71-4ce4659cfe8a");
 //        LocalDate previstaFine = LocalDate.now().plusDays(7);
-//        statoManutenzioneDAO.cambiaStato(bus, StatoVeicolo.IN_MANUTENZIONE, previstaFine);
+//        statoManutenzioneDAO.cambiaStato(bus1, StatoVeicolo.IN_SERVIZIO, null);
 
         // CONTROLLA STATO ATTUALE DOPO MANUTENZINE
         StatoMezzo manutenzione = statoManutenzioneDAO.getStatoAttuale(mezzo);
