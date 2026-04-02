@@ -111,6 +111,11 @@ public class Application {
                     PuntoEmissione punto = em.find(PuntoEmissione.class, idPunto);
 
                     if (punto != null) {
+                        if (punto instanceof Distributore && !((Distributore) punto).isAttivo()) {
+                            System.out.println("ERRORE: Questo distributore è fuori servizio!");
+                            break; // Esce dal case e non procede all'acquisto
+                        }
+
                         em.getTransaction().begin();
                         Biglietto nuovoBiglietto = new Biglietto(LocalDateTime.now(), punto);
                         em.persist(nuovoBiglietto);
